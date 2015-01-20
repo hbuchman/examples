@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DelegateExamples
+namespace DelegateExamples 
 {
     /// <summary>
     /// Illustrates how delegates (method parameters) work in C#.
