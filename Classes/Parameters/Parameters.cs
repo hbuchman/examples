@@ -60,6 +60,7 @@ namespace LectureExamples
         public static int SolveQuadratic(double a, double b, double c, 
                                             out double x1, out double x2)
         {
+
             // Out parameters must be given values
             x1 = x2 = 0;
 

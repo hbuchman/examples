@@ -55,7 +55,5 @@ namespace LectureExamples
         {
             return "[ " + String.Join(" ", list) + " ]";
         }
-
     }
-
 }

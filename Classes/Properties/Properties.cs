@@ -35,7 +35,7 @@ namespace LectureExamples
 
             // Person5
             Person5 p5 = new Person5("Jack", 30);
-            //p5.Age = -5;
+            p5.Age = -5;
             Console.WriteLine(p5.Age);
         }
     }
