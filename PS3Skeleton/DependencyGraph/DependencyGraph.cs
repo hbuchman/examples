@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace DependencyGraph
+namespace Dependencies
 {
     /// <summary>
     /// A DependencyGraph can be modeled as a set of dependencies, where a dependency is an ordered 
