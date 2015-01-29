@@ -1,4 +1,6 @@
-﻿using System;
+﻿// NOTE: These tests are not yet complete!
+
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using SpreadsheetUtilities;
