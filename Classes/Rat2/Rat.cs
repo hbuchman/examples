@@ -1,4 +1,5 @@
 ﻿// Written by Joe Zachary for CS 3500, January 2015
+// Illustration of rep invariants
 
 using System;
 using System.Collections.Generic;
@@ -40,12 +41,19 @@ namespace LectureExamples
         private int num;
         private int den;
 
+        // An implementation of the rep invariant
+        private bool RI()
+        {
+            return den > 0 && Math.Abs(num).Gcd(den) == 1;
+        }
+
         /// <summary>
         /// Creates 0
         /// </summary>
         public Rat()
             : this(0, 1)      // This invokes the 2-argument constructor
         {
+            Debug.Assert(RI());
         }
 
         /// <summary>
@@ -54,6 +62,7 @@ namespace LectureExamples
         public Rat(int n)
             : this(n, 1)      // This invokes the 2-argument constructor
         {
+            Debug.Assert(RI());
         }
 
 
@@ -66,20 +75,27 @@ namespace LectureExamples
         /// <exception cref="System.ArgumentException">If d == 0</exception>
         public Rat(int n, int d)
         {
-            if (d == 0)
+            try
             {
-                throw new ArgumentException("Zero denominator not allowed");
+                if (d == 0)
+                {
+                    throw new ArgumentException("Zero denominator not allowed");
+                }
+                int g = n.Gcd(d);
+                if (d > 0)
+                {
+                    num = n / g;
+                    den = d / g;
+                }
+                else
+                {
+                    num = -n / g;
+                    den = -d / g;
+                }
             }
-            int g = n.Gcd(d);
-            if (d > 0)
+            finally
             {
-                num = n / g;
-                den = d / g;
-            }
-            else
-            {
-                num = -n / g;
-                den = -d / g;
+                Debug.Assert(RI());
             }
         }
 
@@ -94,10 +110,16 @@ namespace LectureExamples
         /// <exception cref="System.OverflowException">When arithmetic overflow</exception>
         public static Rat operator +(Rat r1, Rat r2)
         {
+            Debug.Assert(r1.RI());
+            Debug.Assert(r2.RI());
             checked
             {
-                return new Rat(r1.num * r2.den + r1.den * r2.num,
+                Rat result = new Rat(r1.num * r2.den + r1.den * r2.num,
                                r1.den * r2.den);
+                Debug.Assert(result.RI());
+                Debug.Assert(r1.RI());
+                Debug.Assert(r2.RI());
+                return result;
             }
         }
 
@@ -110,13 +132,21 @@ namespace LectureExamples
         /// </summary>
         public override string ToString()
         {
-            if (den == 1)
+            Debug.Assert(RI());
+            try
             {
-                return num.ToString();
+                if (den == 1)
+                {
+                    return num.ToString();
+                }
+                else
+                {
+                    return num + "/" + den;
+                }
             }
-            else
+            finally
             {
-                return num + "/" + den;
+                Debug.Assert(RI());
             }
         }
 

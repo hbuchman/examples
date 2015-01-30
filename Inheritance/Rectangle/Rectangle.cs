@@ -8,7 +8,6 @@ using System.Diagnostics;
 
 namespace Rectangles
 {
-
     /// <summary>
     /// Represents a rectangle.
     /// </summary>

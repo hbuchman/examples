@@ -1,4 +1,5 @@
-﻿// Written by Joe Zachary for CS 3500, September 2010
+﻿// Written by Joe Zachary for CS 3500, January 2015
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,32 +9,42 @@ namespace Inherit
 {
     public class Tester
     {
-        public static void Main(string[] AssemblyLoadEventArgs)
+        public static void Main(string[] args)
         {
-            Dog d = new Dog("Spot", "mutt");
-            Console.WriteLine(d.Shout());
+            Dog dog = new Dog("Spot", "mutt");
+            Console.WriteLine("Dog stored as Dog says " + dog.Speak() + " and shouts " + dog.Shout());
+            Console.ReadLine();
 
-            Animal a1 = new Dog("Spot", "mutt");
-            Console.WriteLine(a1.Shout());
+            Animal animal1 = new Dog("Spot", "mutt");
+            Console.WriteLine("Dog stored as Animal says " + animal1.Speak() + " and shouts " + animal1.Shout());
+            Console.ReadLine();
 
-            Spider s = new Spider("Charlotte", false);
-            Console.WriteLine(s.Shout());
+            Spider spider = new Spider("Charlotte", false);
+            Console.WriteLine("Spider stored as Spider says " + spider.Speak() + " and shouts " + spider.Shout());
+            Console.ReadLine();
 
-            Animal a = new Spider("Charlotte", false);
-            Console.WriteLine(a.Shout());
+            Animal animal2 = new Spider("Charlotte", false);
+            Console.WriteLine("Spider stored as Animal says " + animal2.Speak() + " and shouts "  + animal2.Shout());
+            Console.ReadLine();
 
-            Console.WriteLine(SpeakSimultaneously(new Speaker[] { d, s, a1, a }));
+            IPhone phone = new IPhone();
+            Console.WriteLine("Phone stored as Phone says " + phone.Speak());
+            Console.ReadLine();
 
+            Console.WriteLine("All speak simultaneously, in the same order, after being stored as Speakers:");
+            Console.WriteLine(SpeakSimultaneously(new Speaker[] { dog, animal1, spider, animal2, phone }));
             Console.ReadLine();
         }
 
-
+        /// <summary>
+        /// Appends the result of all the speakers speaking and returns the resulting string.
+        /// </summary>
         public static String SpeakSimultaneously(Speaker[] speakers)
         {
             String result = "";
             foreach (Speaker s in speakers)
             {
-                result += s.Speak();
+                result += s.Speak() + " ";
             }
             return result;
         }
@@ -45,6 +56,9 @@ namespace Inherit
     /// </summary>
     public interface Speaker
     {
+        /// <summary>
+        /// Returns what the Speaker has to say
+        /// </summary>
         String Speak();
     }
 
@@ -78,7 +92,9 @@ namespace Inherit
         public abstract String Speak();
 
         /// <summary>
-        /// An upper-case version of what the animal Speaks
+        /// An upper-case version of what the animal Speaks.
+        /// Note that it is virtual, which means that it
+        /// cannot be overriden.
         /// </summary>
         /// <returns></returns>
         public String Shout()
@@ -87,28 +103,34 @@ namespace Inherit
         }
 
         /// <summary>
-        /// By default, an Animal has 8 legs.
+        /// The number of legs that an animal has.
+        /// It is virtual, so it can be overridden.
         /// </summary>
         public virtual int LegCount
         {
-            get { return 8; }
+            get { return 4; }
         }
 
         /// <summary>
-        /// Returns what an animal says when it speaks, repeated n times,
-        /// where n > 0.  Behavior is unspecified when n <= 0.
+        /// When n <= 0, throws an ArgumentException.  Otherwise,
+        /// returns a string composed of n copies of what this animal
+        /// says when it speaks, with the copies separated by white
+        /// space.  It is virtual, so it can be overridden.  
         /// </summary>
         public virtual String SpeakRepeatedly(int n)
         {
-            String result = "";
+            if (n <= 0)
+            {
+                throw new ArgumentException();
+            }
+            String result = Speak();
             while (n > 0)
             {
-                result += Speak() + " ";
+                result += " " + Speak();
                 n--;
             }
             return result;
         }
-
     }
 
 
@@ -141,25 +163,14 @@ namespace Inherit
         }
 
         /// <summary>
-        /// This property is now sealed and cannot be overridden.
-        /// </summary>
-        public override sealed int LegCount
-        {
-            get
-            {
-                return 4;
-            }
-        }
-
-        /// <summary>
-        /// Returns what an animal says when it speaks, repeated n times,
-        /// where n >= 1. 
+        /// Behaves like the overridden method, but returns the
+        /// empty string when n <= 0
         /// </summary>
         public override string SpeakRepeatedly(int n)
         {
-            if (n < 1)
+            if (n <= 0)
             {
-                return "-------";
+                return "";
             }
             else
             {
@@ -169,13 +180,11 @@ namespace Inherit
     }
 
 
-
     /// <summary>
     /// A Spider is a kind of Animal
     /// </summary>
     public class Spider : Animal
     {
-
         /// <summary>
         /// A Spider has a name and may be poisonous
         /// </summary>
@@ -190,13 +199,26 @@ namespace Inherit
         /// </summary>
         public bool IsPoisonous { get; private set; }
 
+
+        /// <summary>
+        /// This property is overridden and sealed.  It cannot
+        /// be overrriden by derived classes.
+        /// </summary>
+        public override sealed int LegCount
+        {
+            get
+            {
+                return 8;
+            }
+        }
+
         /// <summary>
         /// What a spider says.
         /// </summary>
         /// <returns></returns>
         public override String Speak()
         {
-            return "spin";
+            return "ick";
         }
 
         /// <summary>
@@ -208,18 +230,34 @@ namespace Inherit
             return base.Shout() + "!!!!!!";
         }
 
-    }
-
-
-    /// <summary>
-    /// A Cat isn't an animal, but it is a speaker.
-    /// </summary>
-    public class Cat : Speaker
-    {
-        public String Speak()
+        /// <summary>
+        /// Behaves like the overridden method, but puts two spaces
+        /// between each copy of Speak()
+        /// </summary>
+        public override string SpeakRepeatedly(int n)
         {
-            return "meow";
+            if (n <= 0)
+            {
+                throw new ArgumentException();
+            }
+            String result = Speak();
+            while (n > 0)
+            {
+                result += "  " + Speak();
+                n--;
+            }
+            return result;
         }
     }
 
+    /// <summary>
+    /// An iPhone isn't an animal, but it is a speaker.
+    /// </summary>
+    public class IPhone : Speaker
+    {
+        public String Speak()
+        {
+            return "Siri";
+        }
+    }
 }
