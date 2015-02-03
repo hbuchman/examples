@@ -39,5 +39,11 @@ namespace RatTests
         {
             Assert.AreEqual(3, 15.Gcd(6));
         }
+
+        [TestMethod]
+        public void TestMethod5()
+        {
+            Assert.AreEqual("0", new Rat().ToString());
+        }
     }
 }
