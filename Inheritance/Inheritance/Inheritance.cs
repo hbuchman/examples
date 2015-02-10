@@ -93,7 +93,7 @@ namespace Inherit
 
         /// <summary>
         /// An upper-case version of what the animal Speaks.
-        /// Note that it is virtual, which means that it
+        /// Note that it is not virtual, which means that it
         /// cannot be overriden.
         /// </summary>
         /// <returns></returns>
