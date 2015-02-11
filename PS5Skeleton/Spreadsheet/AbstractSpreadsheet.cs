@@ -1,8 +1,11 @@
 ﻿// Written by Joe Zachary for CS 3500, February 2015
+// Added usings for Formulas and Dependencies 02/11/15 2:03 pm
 
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Formulas;
+using Dependencies;
 
 namespace SS
 {
