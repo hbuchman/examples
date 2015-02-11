@@ -1,6 +1,6 @@
 ﻿// Written by Joe Zachary for CS 3500, January 2015
 
-using System; 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,24 +29,20 @@ namespace LectureExamples
     /// Provides rational numbers that can be expressed as ratios
     /// of 32-bit integers.  Rats are immutable.
     /// </summary>
-    public class Rat
+    public struct Rat
     {
         // Abstraction function: 
-        // A Rat represents the rational num/den
+        // A Rat represents the rational num/den [den != 0]
+        // A Rat represents 0 [den == 0]
 
         // Representation invariant:
-        //  den > 0
-        //  gcd(|num|, den) = 1
+        //  Either:
+        //   den > 0
+        //   gcd(|num|, den) = 1
+        //  Or:
+        //   num == den == 0
         private int num;
         private int den;
-
-        /// <summary>
-        /// Creates 0
-        /// </summary>
-        public Rat()
-            : this(0, 1)      // This invokes the 2-argument constructor
-        {
-        }
 
         /// <summary>
         /// Creates n
@@ -96,8 +92,18 @@ namespace LectureExamples
         {
             checked
             {
+                r1.normalize();
+                r2.normalize();
                 return new Rat(r1.num * r2.den + r1.den * r2.num,
                                r1.den * r2.den);
+            }
+        }
+
+        private void normalize ()
+        {
+            if (den == 0)
+            {
+                den = 1;
             }
         }
 
@@ -110,6 +116,7 @@ namespace LectureExamples
         /// </summary>
         public override string ToString()
         {
+            normalize();
             if (den == 1)
             {
                 return num.ToString();
@@ -125,15 +132,23 @@ namespace LectureExamples
         /// </summary>
         public override bool Equals(object o)
         {
-            // Cast o to be a Rat.  If the cast fails, we get null back.
-            Rat r = o as Rat;
+            if (o is Rat)
+            {
+                Rat r = (Rat)o;
+                r.normalize();
+                normalize();
 
-            // Make sure r is non-null and its numerator and denominator
-            // the same as those of this.
-            return
-                !ReferenceEquals(r, null) &&
-                this.num == r.num &&
-                this.den == r.den;
+                // Make sure r is non-null and its numerator and denominator
+                // the same as those of this.
+                return
+                    !ReferenceEquals(r, null) &&
+                    this.num == r.num &&
+                    this.den == r.den;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <summary>
