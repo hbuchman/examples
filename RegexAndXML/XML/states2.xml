@@ -1,5 +1,1 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<States>
-  <State Name="Utah" Capital="Salt Lake City" />
-  <State Name="Nevada" Capital="Reno" />
-</States>
+﻿<?xml version="1.0" encoding="utf-8"?><States><State Name="Utah" Capital="Salt Lake City" /><State Name="Nevada" Capital="Reno" /></States>

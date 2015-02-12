@@ -12,17 +12,17 @@ namespace RegexAndXML
         public static void Main(string[] args)
         {
             // Two ways to create an "identifier" regex
-            Regex r1 = new Regex("[a-zA-z][a-zA-Z0-9]*");
+            Regex r1 = new Regex("[a-zA-Z][a-zA-Z0-9]*");
             Regex r2 = new Regex("[a-z][a-z0-9]*", RegexOptions.IgnoreCase);
 
             // A decimal number regex
-            Regex r3 = new Regex("(\\d+\\.\\d*) | (\\d*\\.\\d+)", RegexOptions.IgnorePatternWhitespace);
+            Regex r3 = new Regex(@"(\d+\.\d*) | (\d*\.\d+)", RegexOptions.IgnorePatternWhitespace);
 
             // A decimal number regex that matches an entire line
             Regex r4 = new Regex("^((\\d*\\.\\d+) | (\\d+\\.\\d*))$", RegexOptions.IgnorePatternWhitespace);
 
             // A decimal number regex that matches an entire string
-            Regex r5 = new Regex("^((\\d*.\\d+) | (\\d+.\\d*) | (\\d+.\\d+))$", RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
+            Regex r5 = new Regex("^((\\d*.\\d+) | (\\d+.\\d*))$", RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
 
             // Does a string contain a match?
             Console.WriteLine("Test 1: " + r3.IsMatch("One 22.5 two 36.7 three .777 four"));

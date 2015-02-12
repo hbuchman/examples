@@ -75,7 +75,7 @@ namespace RegexAndXML
         /// </summary>
         public static void ReadExample1()
         {
-            using (XmlReader reader = XmlReader.Create("states1.xml"))
+            using (XmlReader reader = XmlReader.Create("../../states1.xml"))
             {
                 while (reader.Read())
                 {
@@ -114,7 +114,7 @@ namespace RegexAndXML
         /// </summary>
         public static void ReadExample2()
         {
-            using (XmlReader reader = XmlReader.Create("states2.xml"))
+            using (XmlReader reader = XmlReader.Create("../../states2.xml"))
             {
                 while (reader.Read())
                 {
