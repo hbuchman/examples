@@ -14,14 +14,20 @@ namespace Formulas
     /// non-negative floating-point numbers, variables, left and right parentheses, and
     /// the four binary operator symbols +, -, *, and /.  (The unary operators + and -
     /// are not allowed.)
+    /// 
+    /// Associated with each Formula are two delegates: a normalizer and a validator.  
+    /// A normalizer takes a string as a parameter and returns a string as a result; 
+    /// its purpose is to convert variables into a canonical form.  A validator takes a
+    /// string as a parameter and returns a boolean as a result; its purpose is to impose 
+    /// extra restrictions on the validity of a variable.  
     /// </summary>
     public class Formula
     {
         /// <summary>
         /// Creates a Formula from a string that consists of a standard infix expression composed
         /// from non-negative floating-point numbers (using standard C# syntax for double/int literals), 
-        /// variable symbols (one or more letters followed by one or more digits), left and right
-        /// parentheses, and the four binary operator symbols +, -, *, and /.  White space is
+        /// variable symbols (an underscore, letter, or digit followed by one or more letters and/or digits),
+        /// left and right parentheses, and the four binary operator symbols +, -, *, and /.  White space is
         /// permitted between tokens, but is not required.
         /// 
         /// An example of a valid parameter to this constructor is "2.5e9 + x5 / 17".
@@ -29,17 +35,31 @@ namespace Formulas
         /// 
         /// If the formula is syntacticaly invalid, throws a FormulaFormatException with an 
         /// explanatory Message.
+        /// 
+        /// The normalizer and validator become associated with the Formula, and they play into the
+        /// definition of syntactic validity.  Suppose that f, N, and V are passed as the three parameters 
+        /// to the constructor.  N becomes the formula's normalizer and V becomes its validator.  If f is 
+        /// syntactically correct but contains a variable v such that N(v) is not a legal variable as 
+        /// discussed above, the constructor should throw a FormulaFormatException with an explanatory 
+        /// message.  Otherwise, if f contains a variable v such that V(N(v)) is false, the constructor 
+        /// should throw a FormulaFormatException with an explanatory message.  
+        /// </summary>
+        public Formula(String formula, Func<string, string> normalizer, Func<string, bool> validator)
+        {
+        }
+
+        /// <summary>
+        /// This behaves like the 3-parameter version of the constructor, except that the normalizer
+        /// is the identity function and the validator is a string predicate that always returns true.
         /// </summary>
         public Formula(String formula)
         {
         }
 
-        public Formula (String formula, Func<string,string> normalizer, Func<string,bool> validator)
-        {
-        }
 
         /// <summary>
-        /// Evaluates this Formula, using lookup to determine the values of variables.  
+        /// Evaluates this Formula, using lookup to determine the values of variables.  Variables
+        /// are looked up via their normalized forms.
         /// 
         /// If no undefined variables or divisions by zero are encountered when evaluating 
         /// this Formula, the value is returned.  Otherwise, throw a FormulaEvaluationException  
@@ -50,6 +70,11 @@ namespace Formulas
             return 0;
         }
 
+        /// <summary>
+        /// Enumerates the normalized forms of all the variables that appear in this Formula.  Each
+        /// distinct normalized variable occurs exactly once.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<string> GetVariables ()
         {
             return null;

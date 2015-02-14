@@ -101,13 +101,13 @@ namespace LectureExamples
             }
         }
 
-
+        // TODO: This is a test
         // Note the use of the override keyword, required if you want to
         // override an inherited method.
 
         /// <summary>
         /// Returns a standard string representation of a rational number
-        /// </summary>
+        /// </summary
         public override string ToString()
         {
             if (den == 1)

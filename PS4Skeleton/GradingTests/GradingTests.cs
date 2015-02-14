@@ -716,16 +716,6 @@ namespace GradingTests
         {
             StressTest1();
         }
-        [TestMethod()]
-        public void StressTest4()
-        {
-            StressTest1();
-        }
-        [TestMethod()]
-        public void StressTest5()
-        {
-            StressTest1();
-        }
 
 
         // ********************************** ANOTHER STESS TEST, REPEATED ******************** //
@@ -818,16 +808,6 @@ namespace GradingTests
         {
             StressTest8();
         }
-        [TestMethod()]
-        public void StressTest11()
-        {
-            StressTest8();
-        }
-        [TestMethod()]
-        public void StressTest12()
-        {
-            StressTest8();
-        }
 
 
         // ********************************** A THIRD STESS TEST, REPEATED ******************** //
@@ -917,16 +897,6 @@ namespace GradingTests
         }
         [TestMethod()]
         public void StressTest17()
-        {
-            StressTest15();
-        }
-        [TestMethod()]
-        public void StressTest18()
-        {
-            StressTest15();
-        }
-        [TestMethod()]
-        public void StressTest19()
         {
             StressTest15();
         }
