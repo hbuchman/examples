@@ -1,6 +1,7 @@
 ﻿// Written by Joe Zachary for CS 3500, February 2015
 // Added usings for Formulas and Dependencies 02/11/15 2:03 pm
 // Didn't need the Dependencies using 02/11/15 2:24 pm
+// Fixed a syntactic issue with a comment 02/15/15 8:43 pm
 
 using System;
 using System.IO;
@@ -98,6 +99,7 @@ namespace SS
         /// 
         /// Otherwise, returns the contents (as opposed to the value) of the named cell.  The return
         /// value should be either a string, a double, or a Formula.
+        /// </summary>
         public abstract object GetCellContents(String name);
 
         /// <summary>
