@@ -12,7 +12,10 @@
 //           Added a new abstract method AbstractSpreadsheet.SetContentsOfCell
 //           Changed the three AbstractSpreadsheet.SetCellContents methods to be protected
 
+// Changed the parameter to the Save method
+
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Formulas;
@@ -130,7 +133,7 @@ namespace SS
 
         // ADDED FOR PS6
         /// <summary>
-        /// Writes the contents of this spreadsheet to the named file using an XML format.
+        /// Writes the contents of this spreadsheet to dest using an XML format.
         /// The XML elements should be structured as follows:
         ///
         /// <spreadsheet isvalid="IsValid regex goes here">
@@ -152,10 +155,9 @@ namespace SS
         /// If the cell contains a Formula f, f.ToString() with "=" prepended should be written as the contents.
         /// IMPLEMENTATION NOTE:  You'll have to override the ToString method in the Formula class
         ///
-        /// If there are any problems opening, writing, or closing the file, the method should throw an
-        /// IOException.
+        /// If there are any problems writing to dest, the method should throw an IOException.
         /// </summary>
-        public abstract void Save(String filename);
+        public abstract void Save(TextWriter dest);
 
         // ADDED FOR PS6
         /// <summary>
