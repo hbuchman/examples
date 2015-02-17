@@ -1,16 +1,12 @@
-﻿// THIS IS NOT YET READY TO USE.
-
-// Written by Joe Zachary for CS 3500, February 2015
+﻿// Written by Joe Zachary for CS 3500, February 2015
 // Added usings for Formulas and Dependencies 02/11/15 2:03 pm
 // Didn't need the Dependencies using 02/11/15 2:24 pm
 // Fixed a syntactic issue with a comment 02/15/15 8:43 pm
 
-// Modified for use with PS6 02/16/15 10:00 pm
+// Modified for use with PS6 02/16/15 11:30 am
 //           Added a new class SpreadsheetReadWriteException
 //           Modified class comment for AbstractSpreadsheet
 //           Added a new abstract property AbstractSpreadsheet.Changed.
-//           Added a new property AbstractSpreadsheet.IsValid
-//           Added constructor for AbstractSpreadsheet
 //           Added a new method AbstractSpreadsheet.Save
 //           Added a new method AbstractSpreadsheet.GetCellValue
 //           Added a new abstract method AbstractSpreadsheet.SetContentsOfCell
@@ -39,14 +35,15 @@ namespace SS
 
     // ADDED FOR PS6
     /// <summary>
-    /// Thrown to indicate that a read or write attempt has failed.
+    /// Thrown to indicate that a saved spreadsheet could not be read
+    /// because of a formatting problem.
     /// </summary>
-    public class SpreadsheetReadWriteException : Exception
+    public class SpreadsheetReadException : Exception
     {
         /// <summary>
         /// Creates the exception with a message
         /// </summary>
-        public SpreadsheetReadWriteException(string msg)
+        public SpreadsheetReadException(string msg)
             : base(msg)
         {
         }
@@ -72,17 +69,18 @@ namespace SS
         public string Reason { get; private set; }
     }
 
-    // MODIFIED PARAGRAPHS 2 AND 3, AND ADDED PARAGRAPH 4, FOR PS6
+    // MODIFIED PARAGRAPHS 1-3 AND ADDED PARAGRAPH 4,FOR PS6
     /// <summary>
     /// An AbstractSpreadsheet object represents the state of a simple spreadsheet.  A 
-    /// spreadsheet consists of an infinite number of named cells.
+    /// spreadsheet consists of a case-insensitive regular expression (called IsValid
+    /// below) and an infinite number of named cells.
     /// 
     /// A string is a valid cell name if and only if (1) it consists of one or more letters, 
     /// followed by a non-zero digit, followed by zero or more digits AND (2) it is 
-    /// accepted by the IsValid regular expression.
+    /// accepted by IsValid.
     /// 
     /// For example, "A15", "a15", "XY32", and "BC7" are valid cell names, so long as they also
-    /// are accepted by the IsValid regular expression.  On the other hand, 
+    /// are accepted by IsValid.  On the other hand, 
     /// "Z", "X07", and "hello" are not valid cell names, regardless of IsValid.
     /// 
     /// Any valid incoming cell name, whether passed as a parameter or embedded in a formula,
@@ -132,24 +130,6 @@ namespace SS
 
         // ADDED FOR PS6
         /// <summary>
-        /// The Regex that is used to help determine whether or not a cell name is valid,
-        /// as documented in the class comment.  IsValid must be case insensitive.
-        /// </summary>
-        public Regex IsValid { get; private set; }
-
-        // ADDED FOR PS6
-        /// <summary>
-        /// Constructs the AbstractSpreadsheet by setting the IsValid regular expression,
-        /// which is used as documented in the class comment.  The Regex must be
-        /// case insensitive.
-        /// </summary>
-        public AbstractSpreadsheet (Regex validityRegex)
-        {
-            IsValid = validityRegex;
-        }
-
-        // ADDED FOR PS6
-        /// <summary>
         /// Writes the contents of this spreadsheet to the named file using an XML format.
         /// The XML elements should be structured as follows:
         ///
@@ -172,8 +152,8 @@ namespace SS
         /// If the cell contains a Formula f, f.ToString() with "=" prepended should be written as the contents.
         /// IMPLEMENTATION NOTE:  You'll have to override the ToString method in the Formula class
         ///
-        /// If there are any problems opening, writing, or closing the file, the method should throw a
-        /// SpreadsheetReadWriteException with an explanatory message.
+        /// If there are any problems opening, writing, or closing the file, the method should throw an
+        /// IOException.
         /// </summary>
         public abstract void Save(String filename);
 
