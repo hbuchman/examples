@@ -164,7 +164,7 @@ namespace SS
         /// If name is null or invalid, throws an InvalidNameException.
         ///
         /// Otherwise, returns the value (as opposed to the contents) of the named cell.  The return
-        /// value should be either a string, a double, or a SpreadsheetUtilities.FormulaError.
+        /// value should be either a string, a double, or a Spreadsheet.FormulaError.
         /// </summary>
         public abstract object GetCellValue(String name);
 
