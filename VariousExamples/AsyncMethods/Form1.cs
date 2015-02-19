@@ -38,10 +38,14 @@ namespace AsyncMethods
             int n;
             if (int.TryParse(valueOfN.Text, out n))
             {
+                button3.Enabled = true;
+                button2.Enabled = false;
                 factorialBox.Clear();
                 Task<BigInteger> task = Task<BigInteger>.Run(() => Factorial(n));
                 BigInteger result = await task;
                 factorialBox.Text = result.ToString();
+                button3.Enabled = false;
+                button2.Enabled = true;
             }
         }
 

@@ -67,7 +67,12 @@ namespace TaskDemo
         {
             for (int i = 0; i < n; i++)
             {
-                counter++;
+                // Only one thread at a time in
+                // a critical section
+                lock (sync)
+                {
+                    counter++;
+                }
             }
         }
 
@@ -78,14 +83,17 @@ namespace TaskDemo
         {
             for (int i = 0; i < n; i++)
             {
-                counter--;
+                lock (sync)
+                {
+                    counter--;
+                }
             }
         }
 
         /// <summary>
         /// Calculates the number of digits in two factorials and displays them
         /// </summary>
-        private static void ComputeTwoThings ()
+        private static void ComputeTwoThings()
         {
             Task<BigInteger> task1 = Task<BigInteger>.Run(() => Factorial(30000));
             Task<BigInteger> task2 = Task<BigInteger>.Run(() => Factorial(20000));
@@ -96,7 +104,7 @@ namespace TaskDemo
         /// <summary>
         /// Returns n!
         /// </summary>
-        public static BigInteger Factorial (int n)
+        public static BigInteger Factorial(int n)
         {
             BigInteger result = 1;
             while (n > 0)
