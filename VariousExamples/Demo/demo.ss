@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<spreadsheet isvalid="^[a-zA-Z]+[1-9][0-9]*$">
+<spreadsheet isvalid="^[a-zA-Z][1-9][0-9]?$">
   <cell>
     <name>A1</name>
     <contents>2</contents>
