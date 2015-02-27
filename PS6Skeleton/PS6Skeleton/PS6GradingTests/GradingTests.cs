@@ -12,7 +12,7 @@ using System.Xml;
 namespace PS6GradingTests
 {
     [TestClass]
-    public class GradingTests
+    public class PS6GradingTests
     {
         // Accepts all strings
         private const string ALL = "^.*$";
@@ -79,14 +79,6 @@ namespace PS6GradingTests
             AbstractSpreadsheet s = new Spreadsheet();
             s.SetContentsOfCell("B1", "hello");
             Assert.AreEqual("hello", s.GetCellContents("b1"));
-        }
-
-        [TestMethod()]
-        public void NormalizeTest2()
-        {
-            AbstractSpreadsheet ss = new Spreadsheet();
-            ss.SetContentsOfCell("B1", "hello");
-            Assert.AreEqual("hello", ss.GetCellContents("b1"));
         }
 
         [TestMethod()]
@@ -163,12 +155,65 @@ namespace PS6GradingTests
 
 
         [TestMethod()]
-        public void Changed()
+        public void Changed1()
+        {
+            AbstractSpreadsheet ss = new Spreadsheet();
+            Assert.IsFalse(ss.Changed);
+        }
+
+        [TestMethod()]
+        public void Changed2()
         {
             AbstractSpreadsheet ss = new Spreadsheet();
             Assert.IsFalse(ss.Changed);
             Set(ss, "C1", "17.5");
             Assert.IsTrue(ss.Changed);
+        }
+
+        [TestMethod()]
+        public void Changed3()
+        {
+            AbstractSpreadsheet ss = new Spreadsheet();
+            Assert.IsFalse(ss.Changed);
+            Set(ss, "C1", "17.5");
+            Assert.IsTrue(ss.Changed);
+            ss.Save(new StringWriter());
+            Assert.IsFalse(ss.Changed);
+        }
+
+        [TestMethod()]
+        public void Names1()
+        {
+            AbstractSpreadsheet ss = new Spreadsheet();
+            Assert.IsFalse(ss.GetNamesOfAllNonemptyCells().GetEnumerator().MoveNext());
+        }
+
+        [TestMethod()]
+        public void Names2()
+        {
+            AbstractSpreadsheet ss = new Spreadsheet();
+            ss.SetContentsOfCell("A1", "hello");
+            ss.SetContentsOfCell("B1", "55");
+            ss.SetContentsOfCell("C1", "=A1+B1");
+            HashSet<string> names = new HashSet<string>();
+            names.Add("A1");
+            names.Add("B1");
+            names.Add("C1");
+            Assert.IsTrue(names.SetEquals(ss.GetNamesOfAllNonemptyCells()));
+        }
+
+        [TestMethod()]
+        public void Names3()
+        {
+            AbstractSpreadsheet ss = new Spreadsheet();
+            ss.SetContentsOfCell("A1", "hello");
+            ss.SetContentsOfCell("B1", "55");
+            ss.SetContentsOfCell("C1", "=A1+B1");
+            ss.SetContentsOfCell("A1", "");
+            HashSet<string> names = new HashSet<string>();
+            names.Add("B1");
+            names.Add("C1");
+            Assert.IsTrue(names.SetEquals(ss.GetNamesOfAllNonemptyCells()));
         }
 
 
@@ -361,36 +406,6 @@ namespace PS6GradingTests
             Multiple();
         }
 
-        // Reading/writing spreadsheets
-        [TestMethod()]
-        public void SaveTest1()
-        {
-            AbstractSpreadsheet ss = new Spreadsheet();
-            try
-            {
-                ss.Save(File.CreateText("q:\\missing\\save.txt"));
-            }
-            catch (IOException)
-            {
-                return;
-            }
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void SaveTest2()
-        {
-            try
-            {
-                AbstractSpreadsheet ss = new Spreadsheet(File.OpenText("q:\\missing\\save.txt"));
-            }
-            catch (IOException)
-            {
-                return;
-            }
-            Assert.Fail();
-        }
-
         [TestMethod()]
         public void SaveTest3()
         {
@@ -407,6 +422,25 @@ namespace PS6GradingTests
         public void SaveTest4()
         {
             AbstractSpreadsheet ss = new Spreadsheet(new StringReader("Hello world"));
+        }
+
+        [TestMethod()]
+        public void SaveTest6()
+        {
+            AbstractSpreadsheet ss = new Spreadsheet(new Regex("^[b-zB-Z]+[0-9]+"));
+            ss.SetContentsOfCell("B1", "5");
+            StringWriter sw = new StringWriter();
+            ss.Save(sw);
+            ss = new Spreadsheet(new StringReader(sw.ToString()));
+            try
+            {
+                ss.SetContentsOfCell("A1", "5");
+            }
+            catch (InvalidNameException)
+            {
+                return;
+            }
+            Assert.Fail();
         }
 
 
@@ -587,6 +621,12 @@ namespace PS6GradingTests
             Formula4();
         }
 
+        [TestMethod()]
+        public void Formula4b()
+        {
+            Formula4();
+        }
+
 
         [TestMethod()]
         public void MediumSheet()
@@ -617,6 +657,12 @@ namespace PS6GradingTests
             MediumSheet();
         }
 
+        [TestMethod()]
+        public void MediumSheetb()
+        {
+            MediumSheet();
+        }
+
 
         [TestMethod()]
         public void MediumSave()
@@ -635,19 +681,25 @@ namespace PS6GradingTests
             MediumSave();
         }
 
+        [TestMethod()]
+        public void MediumSaveb()
+        {
+            MediumSave();
+        }
 
-        // A long chained formula.  If this doesn't finish within 60 seconds, it fails.
+
+        // A long chained formula.  If this doesn't finish within 10 seconds, it fails.
         [TestMethod()]
         public void LongFormulaTest()
         {
             object result = "";
             Thread t = new Thread(() => LongFormulaHelper(out result));
             t.Start();
-            t.Join(60 * 1000);
+            t.Join(10 * 1000);
             if (t.IsAlive)
             {
                 t.Abort();
-                Assert.Fail("Computation took longer than 60 seconds");
+                Assert.Fail("Computation took longer than 10 seconds");
             }
             Assert.AreEqual("ok", result);
         }
