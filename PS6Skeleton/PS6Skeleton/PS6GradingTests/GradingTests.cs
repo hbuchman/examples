@@ -690,7 +690,7 @@ namespace PS6GradingTests
 
         // A long chained formula.  If this doesn't finish within 10 seconds, it fails.
         [TestMethod()]
-        public void LongFormulaTest()
+        public void LongTest()
         {
             object result = "";
             Thread t = new Thread(() => LongFormulaHelper(out result));
