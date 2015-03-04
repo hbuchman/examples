@@ -254,7 +254,8 @@ namespace GradingTests
             s.SetCellContents("A2", 6);
             s.SetCellContents("A3", new Formula("A2+A4"));
             s.SetCellContents("A4", new Formula("A2+A5"));
-            Assert.IsTrue(s.SetCellContents("A5", 82.5).SetEquals(new HashSet<string>() { "A5", "A4", "A3", "A1" }));
+            HashSet<string> result = s.SetCellContents("A5", 82.5);
+            Assert.IsTrue(result.SetEquals(new HashSet<string>() { "A5", "A4", "A3", "A1" }));
         }
 
         // CHANGING CELLS
