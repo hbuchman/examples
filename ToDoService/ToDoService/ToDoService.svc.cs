@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
@@ -21,6 +22,15 @@ namespace ToDoList
         private readonly static IList<ToDoItem> items = new List<ToDoItem>();
         private static long uid = 0;
         private static readonly object sync = new object();
+
+        static ToDoService ()
+        {
+            /* EXPERIMENTAL
+            EventLog appLog = new System.Diagnostics.EventLog();
+            appLog.Source = "Application";
+            appLog.WriteEntry("This is a test", EventLogEntryType.Information);
+             */
+        }
 
         public IList<ToDoItem> GetAllItems(bool includeCompleted, string userName)
         {
