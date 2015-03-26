@@ -80,6 +80,12 @@ namespace Chat
         // Text that needs to be sent to the client but has not yet gone
         private String outgoing;
 
+        // Records whether an asynchronous send attempt is ongoing
+        private bool sendIsOngoing = false;
+
+        // For synchronizing sends
+        private readonly object sendSync = new object();
+
         // Encoding used for incoming/outgoing data
         private static System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
 
@@ -147,12 +153,6 @@ namespace Chat
                     SocketFlags.None, MessageReceived, buffer);
             }
         }
-
-        // Records whether an asynchronous send attempt is ongoing
-        private bool sendIsOngoing = false;
-
-        // For synchronizing sends
-        private readonly object sendSync = new object();
 
         /// <summary>
         /// Sends a string to the client
