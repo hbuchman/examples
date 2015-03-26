@@ -25,11 +25,9 @@ namespace ToDoList
 
         static ToDoService ()
         {
-            /* EXPERIMENTAL
             EventLog appLog = new System.Diagnostics.EventLog();
             appLog.Source = "Application";
-            appLog.WriteEntry("This is a test", EventLogEntryType.Information);
-             */
+            appLog.WriteEntry("ToDoServer: This is a test", EventLogEntryType.Information);
         }
 
         public IList<ToDoItem> GetAllItems(bool includeCompleted, string userName)

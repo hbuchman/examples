@@ -4,13 +4,13 @@ The Boggle server keeps track of two sets: a set of users and a set of games.
 
 A user consists of a nickname and a user token.  No two users can share the same token.  A nickname can be any string,
 such as "Joe" or "Spike".  A user token must be a string that is extremely difficult to guess.  This implies that it
-must be long and randomly generated.  (A good way to generate a token is with Gui.NewGuid.)
+must be long and randomly generated.  (A good way to generate a token is with Guid.NewGuid.)
 
 A game represents the state of a single Boggle game.
 
 All games have:
 
-  1.  A unique game token.  No two games can share a token.  (Again, Gui.NewGuid is a good way to generate tokens.)
+  1.  A unique game token.  No two games can share a token.  (Again, Guid.NewGuid is a good way to generate tokens.)
 
   2.  A game state.  The four possible game states are "waiting" (only one player has joined and the game has
       not been canceled); "playing" (two players have joined a game and time has not yet expired); "finished"
@@ -72,7 +72,7 @@ Otherwise, creates a new game that has the specified player 1.  Returns the new 
  
 POST  /joingame
 {
-    userToken: token
+    userToken: string
 }
 
 Response code 200:
