@@ -62,6 +62,9 @@ Response code 200:
 
 If the user token is invalid, responds with response code 403 (Forbidden).
 
+Otherwise, if there is currently a "waiting" game and the specified player is also player 1 in that game,
+responds with response code 409 (Conflict).
+
 Otherwise, if there is currently a "waiting" game, adds the specified player as player 2.  Returns the game's
 unique token.
 
