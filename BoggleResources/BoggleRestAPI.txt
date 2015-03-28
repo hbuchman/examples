@@ -89,11 +89,7 @@ Otherwise, if the specified game is not "waiting", responds with response code 4
 
 Otherwise, cancels the specified game and responds with response code 204 (No Content).
 
-DELETE  /joingame
-{
-    userToken: string
-    gameToken: string
-}
+DELETE  /joingame/userToken/gameToken
 
 
 
