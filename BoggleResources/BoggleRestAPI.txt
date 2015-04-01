@@ -123,8 +123,6 @@ Otherwise, returns the structure illustrated below, where:
   10.  player2.wordsPlayed is either the word/score list for player 2 (if the state is "finished") or is
        an empty list (otherwise)
 
-Otherwise, returns the second structure illustrated below, where:
-
 GET  /status?gameToken=string
 
 Response code 200:

@@ -60,7 +60,7 @@ namespace ToDoList
         public static HttpClient CreateClient()
         {
             HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:30000/");
+            client.BaseAddress = new Uri("http://localhost:32513/");
             return client;
         }
 
@@ -138,7 +138,7 @@ namespace ToDoList
         [ClassInitialize()]
         public static void MyClassInitialize(TestContext testContext)
         {
-            IISAgent.Start("/site:\"ToDoService(1)\" /apppool:\"Clr4IntegratedAppPool\"");
+            IISAgent.Start("/site:\"ToDoService\" /apppool:\"Clr4IntegratedAppPool\"");
         }
 
         /// <summary>
