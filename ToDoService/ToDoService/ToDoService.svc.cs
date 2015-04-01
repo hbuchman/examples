@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
@@ -48,6 +49,8 @@ namespace ToDoList
 
         public string AddItem(ToDoItem item)
         {
+            //WebOperationContext.Current.OutgoingResponse.StatusCode = (HttpStatusCode) 409;
+
             lock(sync)
             {
                 item.Uid = "" + uid++;

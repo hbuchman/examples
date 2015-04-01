@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net.Sockets;
 using Chat;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace ChatServerTester
 {
@@ -17,7 +18,7 @@ namespace ChatServerTester
             SimpleChatServer server = new SimpleChatServer(4000);
             SimpleTest("Test 1\r\nHello world\r\n");
 
-            /*
+
             Task[] tasks = new Task[10];
             for (int i = 0; i < tasks.Length; i++)
             {
@@ -25,10 +26,10 @@ namespace ChatServerTester
                 tasks[i] = Task.Run(() => SimpleTest(testString));
             }
             Task.WaitAll(tasks);
-            */
+
         }
 
-        private void SimpleTest (string testString)
+        private void SimpleTest(string testString)
         {
             // Open a socket to the server
             TcpClient client = new TcpClient("localhost", 4000);

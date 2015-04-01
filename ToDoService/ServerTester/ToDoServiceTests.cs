@@ -174,7 +174,7 @@ namespace ToDoList
         }
 
         // Number of owners to use in ComplexTest
-        private const int OWNERS = 10;
+        private const int OWNERS = 20;
 
         // Number of ToDoItems (half completed) to use per
         // owner in ComplexTest
