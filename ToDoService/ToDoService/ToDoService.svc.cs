@@ -34,7 +34,7 @@ namespace ToDoList
         public IList<ToDoItem> GetAllItems(bool includeCompleted, string userName)
         {
             List<ToDoItem> result = new List<ToDoItem>();
-            lock (sync)
+            //lock (sync)
             {
                 foreach (ToDoItem item in items)
                 {
@@ -51,7 +51,7 @@ namespace ToDoList
         {
             //WebOperationContext.Current.OutgoingResponse.StatusCode = (HttpStatusCode) 409;
 
-            lock(sync)
+            //lock(sync)
             {
                 item.Uid = "" + uid++;
                 items.Add(item);
@@ -61,7 +61,7 @@ namespace ToDoList
 
         public void MarkCompleted(string uid)
         {
-            lock (sync)
+            //lock (sync)
             {
                 foreach (ToDoItem item in items)
                 {
@@ -76,7 +76,7 @@ namespace ToDoList
 
         public void DeleteItem (string uid)
         {
-            lock(sync)
+            //lock(sync)
             {
                 for (int i = 0; i < items.Count; i++)
                 {

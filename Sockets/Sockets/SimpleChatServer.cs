@@ -21,10 +21,8 @@ namespace Chat
             Console.ReadLine();
         }
 
-
         // Listens for incoming connection requests
         private TcpListener server;
-
 
         /// <summary>
         /// Creates a SimpleChatServer that listens for connection requests on port 4000.
@@ -64,21 +62,35 @@ namespace Chat
         }
     }
 
-
     /// <summary>
     /// Represents a connection with a remote client.  Takes care of receiving and sending
     /// information to that client according to the protocol.
     /// </summary>
     class ClientConnection
     {
+        // Incoming/outgoing is UTF8-encoded.  This is a multi-byte encoding.  The first 128 Unicode characters
+        // (which corresponds to the old ASCII character set and contains the common keyboard characters) are
+        // encoded into a single byte.  The rest of the Unicode characters can take from 2 to 4 bytes to encode.
+        private static System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
+
+        // Buffer size for reading incoming bytes
+        private const int BUFFER_SIZE = 1024;
+
         // The socket through which we communicate with the remote client
         private Socket socket;
 
         // Text that has been received from the client but not yet dealt with
-        private String incoming;
+        private StringBuilder incoming;
 
-        // Text that needs to be sent to the client but has not yet gone
-        private String outgoing;
+        // Text that needs to be sent to the client but which we have not yet started sending
+        private StringBuilder outgoing;
+
+        // For decoding incoming UTF8-encoded byte streams.
+        private Decoder decoder = encoding.GetDecoder();
+
+        // Buffers that will contain incoming bytes and characters
+        private byte[] incomingBytes = new byte[BUFFER_SIZE];
+        private char[] incomingChars = new char[BUFFER_SIZE];
 
         // Records whether an asynchronous send attempt is ongoing
         private bool sendIsOngoing = false;
@@ -86,8 +98,10 @@ namespace Chat
         // For synchronizing sends
         private readonly object sendSync = new object();
 
-        // Encoding used for incoming/outgoing data
-        private static System.Text.UTF8Encoding encoding = new System.Text.UTF8Encoding();
+        // Bytes that we are actively trying to send, along with the
+        // index of the leftmost byte whose send has not yet been completed
+        private byte[] pendingBytes = new byte[0];
+        private int pendingIndex = 0;
 
         /// <summary>
         /// Creates a ClientConnection from the socket, then begins communicating with it.
@@ -96,33 +110,28 @@ namespace Chat
         {
             // Record the socket and clear incoming
             socket = s;
-            incoming = "";
-            outgoing = "";
+            incoming = new StringBuilder();
+            outgoing = new StringBuilder();
 
             // Send a welcome message to the remote client
             SendMessage("Welcome!\r\n");
 
             // Ask the socket to call MessageReceive as soon as up to 1024 bytes arrive.
-            byte[] buffer = new byte[1024];
-            socket.BeginReceive(buffer, 0, buffer.Length,
-                                SocketFlags.None, MessageReceived, buffer);
+            socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
+                                SocketFlags.None, MessageReceived, null);
         }
-
 
         /// <summary>
         /// Called when some data has been received.
         /// </summary>
         private void MessageReceived(IAsyncResult result)
         {
-            // Get the buffer to which the data was written.
-            byte[] buffer = (byte[])(result.AsyncState);
-
             // Figure out how many bytes have come in
-            int bytes = socket.EndReceive(result);
+            int bytesRead = socket.EndReceive(result);
 
             // If no bytes were received, it means the client closed its side of the socket.
             // Report that to the console and close our socket.
-            if (bytes == 0)
+            if (bytesRead == 0)
             {
                 Console.WriteLine("Socket closed");
                 socket.Close();
@@ -131,39 +140,39 @@ namespace Chat
             // Otherwise, decode and display the incoming bytes.  Then request more bytes.
             else
             {
-                // Convert the bytes into a string
-                incoming += encoding.GetString(buffer, 0, bytes);
+                // Convert the bytes into characters and appending to incoming
+                int charsRead = decoder.GetChars(incomingBytes, 0, bytesRead, incomingChars, 0, false);
+                incoming.Append(incomingChars, 0, charsRead);
                 Console.WriteLine(incoming);
 
-                // Echo any complete lines, converted to upper case
-                int index;
-                while ((index = incoming.IndexOf('\n')) >= 0)
+                // Echo any complete lines, after capitalizing them
+                for (int i = incoming.Length - 1; i >= 0; i--)
                 {
-                    String line = incoming.Substring(0, index);
-                    if (line.EndsWith("\r"))
+                    if (incoming[i] == '\n')
                     {
-                        line = line.Substring(0, index - 1);
+                        String lines = incoming.ToString(0, i + 1);
+                        incoming.Remove(0, i + 1);
+                        SendMessage(lines.ToUpper());
+                        break;
                     }
-                    SendMessage(line.ToUpper() + "\r\n");
-                    incoming = incoming.Substring(index + 1);
                 }
 
                 // Ask for some more data
-                socket.BeginReceive(buffer, 0, buffer.Length,
-                    SocketFlags.None, MessageReceived, buffer);
+                socket.BeginReceive(incomingBytes, 0, incomingBytes.Length,
+                    SocketFlags.None, MessageReceived, null);
             }
         }
 
         /// <summary>
         /// Sends a string to the client
         /// </summary>
-        private void SendMessage(String message)
+        private void SendMessage(string lines)
         {
             // Get exclusive access to send mechanism
             lock (sendSync)
             {
-                // Append the message to the unsent string
-                outgoing += message;
+                // Append the message to the outgoing lines
+                outgoing.Append(lines);
 
                 // If there's not a send ongoing, start one.
                 if (!sendIsOngoing)
@@ -174,26 +183,37 @@ namespace Chat
             }
         }
 
-
         /// <summary>
         /// Attempts to send the entire outgoing string.
         /// This method should not be called unless sendSync has been acquired.
         /// </summary>
         private void SendBytes()
         {
-            if (outgoing == "")
+            // If we're in the middle of the process of sending out a block of bytes,
+            // keep doing that.
+            if (pendingIndex < pendingBytes.Length)
+            {
+                socket.BeginSend(pendingBytes, pendingIndex, pendingBytes.Length - pendingIndex,
+                                 SocketFlags.None, MessageSent, null);
+            }
+
+            // If we're not currently dealing with a block of bytes, make a new block of bytes
+            // out of outgoing and start sending that.
+            else if (outgoing.Length > 0)
+            {
+                pendingBytes = encoding.GetBytes(outgoing.ToString());
+                pendingIndex = 0;
+                outgoing.Clear();
+                socket.BeginSend(pendingBytes, 0, pendingBytes.Length,
+                                 SocketFlags.None, MessageSent, null);
+            }
+
+            // If there's nothing to send, shut down for the time being.
+            else
             {
                 sendIsOngoing = false;
             }
-            else
-            {
-                byte[] outgoingBuffer = encoding.GetBytes(outgoing);
-                outgoing = "";
-                socket.BeginSend(outgoingBuffer, 0, outgoingBuffer.Length,
-                                 SocketFlags.None, MessageSent, outgoingBuffer);
-            }
         }
-
 
         /// <summary>
         /// Called when a message has been successfully sent
@@ -201,32 +221,26 @@ namespace Chat
         private void MessageSent(IAsyncResult result)
         {
             // Find out how many bytes were actually sent
-            int bytes = socket.EndSend(result);
+            int bytesSent = socket.EndSend(result);
 
             // Get exclusive access to send mechanism
             lock (sendSync)
             {
-                // Get the bytes that we attempted to send
-                byte[] outgoingBuffer = (byte[])result.AsyncState;
-                
                 // The socket has been closed
-                if (bytes == 0)
+                if (bytesSent == 0)
                 {
                     socket.Close();
                     Console.WriteLine("Socket closed");
                 }
 
-                // Prepend the unsent bytes and try sending again.
+                // Update the pendingIndex and keep trying
                 else
                 {
-                    outgoing = encoding.GetString(outgoingBuffer, bytes, 
-                                                  outgoingBuffer.Length - bytes) + outgoing;
+                    pendingIndex += bytesSent;
                     SendBytes();
                 }
             }
-
         }
     }
-
 }
 
