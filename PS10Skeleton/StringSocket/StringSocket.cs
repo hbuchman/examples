@@ -64,7 +64,7 @@ namespace CustomNetworking
         /// <summary>
         /// Creates a StringSocket from a regular Socket, which should already be connected.  
         /// The read and write methods of the regular Socket must not be called after the
-        /// LineSocket is created.  Otherwise, the StringSocket will not behave properly.  
+        /// StringSocket is created.  Otherwise, the StringSocket will not behave properly.  
         /// The encoding to use to convert between raw bytes and strings is also provided.
         /// </summary>
         public StringSocket(Socket s, Encoding e)
