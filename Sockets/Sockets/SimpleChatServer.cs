@@ -46,7 +46,7 @@ namespace Chat
         /// This is the callback method that is passed to BeginAcceptSocket.  It is called
         /// when a connection request has arrived at the server.
         /// </summary>
-        public void ConnectionRequested(IAsyncResult result)
+        private void ConnectionRequested(IAsyncResult result)
         {
             // We obtain the socket corresonding to the connection request.  Notice that we
             // are passing back the IAsyncResult object.
